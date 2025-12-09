@@ -1,7 +1,10 @@
 // src/api/client.js
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// En desarrollo, usar proxy de Vite. En producción, usar la URL completa
+// Si VITE_API_URL está definida, usarla. Si no, en desarrollo usar proxy, en producción usar localhost:3000
+const API_URL = import.meta.env.VITE_API_URL || 
+  (import.meta.env.DEV ? '/api' : 'http://localhost:3000');
 
 // --- almacenamiento del token en localStorage ---
 const TOKEN_KEY = 'nur_token';
