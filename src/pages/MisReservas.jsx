@@ -125,24 +125,31 @@ export default function MisReservas() {
                 <td style={{ padding: 12, textAlign: "center" }}>{estadoBadge(r.estado)}</td>
                 <td style={{ padding: 12 }}>{r.motivo_rechazo || "-"}</td>
                 <td style={{ padding: 12 }}>
-                  {r.estado === "pendiente" && (
-                    <button
-                      onClick={() => handleCancelar(r.id)}
-                      style={{
-                        padding: "4px 10px",
-                        background: "#e74c3c",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: 4,
-                        cursor: "pointer",
-                        transition: "0.2s",
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#c0392b")}
-                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#e74c3c")}
-                    >
-                      Cancelar
-                    </button>
-                  )}
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    {r.documentos && r.documentos.length > 0 && (
+                      <span style={{ fontSize: 12, color: "#555" }}>
+                        📎 {r.documentos.length}
+                      </span>
+                    )}
+                    {r.estado === "pendiente" && (
+                      <button
+                        onClick={() => handleCancelar(r.id)}
+                        style={{
+                          padding: "4px 10px",
+                          background: "#e74c3c",
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: 4,
+                          cursor: "pointer",
+                          transition: "0.2s",
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#c0392b")}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#e74c3c")}
+                      >
+                        Cancelar
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
