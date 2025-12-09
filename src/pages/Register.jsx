@@ -139,6 +139,7 @@ export default function Register() {
               onChange={onChange}
               required
               minLength={6}
+              autoComplete="new-password"
               style={{
                 width: "100%",
                 padding: 10,
