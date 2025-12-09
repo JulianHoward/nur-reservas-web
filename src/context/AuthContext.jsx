@@ -33,10 +33,15 @@ export function AuthProvider({ children }) {
   async function register(payload) {
     // payload: { nombre, apellido, correo, password, role?, user_type? }
     setError(null);
-    const { data } = await api.post("/auth/register", payload);
-    setAuthToken(data.token);
-    setUser(data.user);
-    return data.user;
+    try {
+      const { data } = await api.post("/auth/register", payload);
+      setAuthToken(data.token);
+      setUser(data.user);
+      return data.user;
+    } catch (err) {
+      console.error("Error en registro:", err);
+      throw err;
+    }
   }
 
   async function login({ correo, password }) {
