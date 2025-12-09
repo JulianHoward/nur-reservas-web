@@ -3,8 +3,14 @@ import axios from 'axios';
 
 // En desarrollo, usar proxy de Vite. En producción, usar la URL completa
 // Si VITE_API_URL está definida, usarla. Si no, en desarrollo usar proxy, en producción usar localhost:3000
+const isDev = import.meta.env.DEV || import.meta.env.MODE === 'development';
 const API_URL = import.meta.env.VITE_API_URL || 
-  (import.meta.env.DEV ? '/api' : 'http://localhost:3000');
+  (isDev ? '/api' : 'http://localhost:3000');
+
+// Debug: verificar la URL configurada
+if (isDev) {
+  console.log('🔧 Modo desarrollo detectado. API_URL:', API_URL);
+}
 
 // --- almacenamiento del token en localStorage ---
 const TOKEN_KEY = 'nur_token';
@@ -33,6 +39,13 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  
+  // Debug: mostrar la URL completa que se está usando
+  if (isDev) {
+    const fullUrl = config.baseURL + config.url;
+    console.log('🌐 Petición a:', fullUrl);
+  }
+  
   return config;
 });
 
