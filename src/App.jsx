@@ -8,6 +8,10 @@ import Espacios from "./pages/Espacios";
 import MisReservas from "./pages/MisReservas";
 import AdminCalendario from "./pages/AdminCalendario";
 import FormReserva from "./pages/FormReserva";
+import Reportes from "./pages/Reportes";
+import Notificaciones from "./pages/Notificaciones";
+import Configuracion from "./pages/Configuracion";
+import DisponibilidadEspacio from "./pages/DisponibilidadEspacio";
 
 import NUR_LOGO from "./assets/logo-nur.png";
 import ReservasPendientes from "./pages/ReservasPendientes";
@@ -46,11 +50,15 @@ export default function App() {
           <Route path="espacios" element={<Espacios />} />
           <Route path="mis-reservas" element={<MisReservas />} />
           <Route path="nueva-reserva" element={<FormReserva />} />
+          <Route path="notificaciones" element={<Notificaciones />} />
           <Route path="admin/calendario" element={<AdminCalendario />} />
           <Route
             path="admin/reservas-pendientes"
             element={<ReservasPendientes />}
           />
+          <Route path="admin/reportes" element={<Reportes />} />
+          <Route path="admin/configuracion" element={<Configuracion />} />
+          <Route path="admin/disponibilidad" element={<DisponibilidadEspacio />} />
         </Route>
       </Routes>
     </BrowserRouter>

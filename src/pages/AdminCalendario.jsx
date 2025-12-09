@@ -2,21 +2,32 @@ import { useState, useEffect } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import { api } from "../api/client";
+import { getEspaciosVisibles } from "../api/espacios";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const localizer = momentLocalizer(moment);
 
 export default function AdminCalendario() {
   const [reservas, setReservas] = useState([]);
+  const [espacios, setEspacios] = useState([]);
+  const [espacioFiltro, setEspacioFiltro] = useState("");
+  const [vista, setVista] = useState("month");
 
   useEffect(() => {
-    const fetchReservas = async () => {
+    const cargarDatos = async () => {
       try {
-        const res = await api.get("/reservas");
+        // Cargar espacios
+        const espaciosRes = await getEspaciosVisibles();
+        const arr = Array.isArray(espaciosRes.data) ? espaciosRes.data : espaciosRes.data.data || [];
+        setEspacios(arr);
+
+        // Cargar reservas
+        const params = espacioFiltro ? { espacio_id: espacioFiltro } : {};
+        const res = await api.get("/reservas", { params });
         const events = res.data.map((r) => ({
           start: new Date(r.fecha_inicio),
           end: new Date(r.fecha_fin),
-          title: `${r.tipo_evento} - ${r.estado}`,
+          title: `${r.espacio?.nombre || r.espacio_id} - ${r.tipo_evento}`,
           reserva: r,
         }));
         setReservas(events);
@@ -24,8 +35,8 @@ export default function AdminCalendario() {
         console.error(err);
       }
     };
-    fetchReservas();
-  }, []);
+    cargarDatos();
+  }, [espacioFiltro]);
 
   const handleSelectEvent = async (event) => {
     const reserva = event.reserva;
@@ -102,19 +113,111 @@ export default function AdminCalendario() {
     <div
       style={{
         padding: "30px",
-        maxWidth: "1200px",
+        maxWidth: "1400px",
         margin: "0 auto",
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
       }}
     >
-      <h2 style={{ textAlign: "center", marginBottom: "24px", color: "#333" }}>
-        Calendario de Reservas
-      </h2>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "24px",
+          flexWrap: "wrap",
+          gap: 16,
+        }}
+      >
+        <h2 style={{ margin: 0, color: "#003366" }}>Calendario de Reservas</h2>
+        <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+          <select
+            value={espacioFiltro}
+            onChange={(e) => setEspacioFiltro(e.target.value)}
+            style={{
+              padding: "8px 12px",
+              borderRadius: 4,
+              border: "1px solid #ccc",
+              fontSize: 14,
+            }}
+          >
+            <option value="">Todos los espacios</option>
+            {espacios.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.nombre}
+              </option>
+            ))}
+          </select>
+          <select
+            value={vista}
+            onChange={(e) => setVista(e.target.value)}
+            style={{
+              padding: "8px 12px",
+              borderRadius: 4,
+              border: "1px solid #ccc",
+              fontSize: 14,
+            }}
+          >
+            <option value="month">Mes</option>
+            <option value="week">Semana</option>
+            <option value="day">Día</option>
+            <option value="agenda">Agenda</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Leyenda */}
+      <div
+        style={{
+          display: "flex",
+          gap: 16,
+          marginBottom: 16,
+          padding: 12,
+          background: "#fff",
+          borderRadius: 8,
+          boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div
+            style={{
+              width: 20,
+              height: 20,
+              background: "#f0ad4e",
+              borderRadius: 4,
+            }}
+          />
+          <span>Pendiente</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div
+            style={{
+              width: 20,
+              height: 20,
+              background: "#5cb85c",
+              borderRadius: 4,
+            }}
+          />
+          <span>Aprobado</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div
+            style={{
+              width: 20,
+              height: 20,
+              background: "#d9534f",
+              borderRadius: 4,
+            }}
+          />
+          <span>Rechazado</span>
+        </div>
+      </div>
+
       <div
         style={{
           boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
           borderRadius: "8px",
           overflow: "hidden",
+          background: "#fff",
         }}
       >
         <Calendar
@@ -125,6 +228,18 @@ export default function AdminCalendario() {
           style={{ height: "650px", padding: "10px" }}
           onSelectEvent={handleSelectEvent}
           eventPropGetter={eventStyleGetter}
+          views={["month", "week", "day", "agenda"]}
+          view={vista}
+          onView={(view) => setVista(view)}
+          messages={{
+            next: "Siguiente",
+            previous: "Anterior",
+            today: "Hoy",
+            month: "Mes",
+            week: "Semana",
+            day: "Día",
+            agenda: "Agenda",
+          }}
         />
       </div>
     </div>

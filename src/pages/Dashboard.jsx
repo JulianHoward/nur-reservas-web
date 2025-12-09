@@ -2,6 +2,7 @@
 import { useAuth } from "../context/AuthContext";
 import { Link, Outlet } from "react-router-dom";
 import NUR_LOGO from "../assets/logo-nur.png";
+import NotificationBadge from "../components/NotificationBadge";
 
 // Íconos simples con emojis
 const icons = {
@@ -25,14 +26,18 @@ export default function Dashboard() {
   const userCards = [
     { name: "Mis Reservas", path: "/dashboard/mis-reservas", icon: icons.misReservas },
     { name: "Nueva Reserva", path: "/dashboard/nueva-reserva", icon: icons.nuevaReserva },
+    { name: "Notificaciones", path: "/dashboard/notificaciones", icon: "🔔" },
   ];
 
   const adminCards = [
     { name: "Gestión de Espacios", path: "/dashboard/espacios", icon: icons.gestionEspacios },
     { name: `Reservas Pendientes (${resumen.pendientes})`, path: "/dashboard/admin/reservas-pendientes", icon: icons.reservasPendientes },
     { name: "Calendario", path: "/dashboard/admin/calendario", icon: icons.calendario },
+    { name: "Disponibilidad", path: "/dashboard/admin/disponibilidad", icon: "📊" },
     { name: "Reportes", path: "/dashboard/admin/reportes", icon: icons.reportes },
+    { name: "Configuración", path: "/dashboard/admin/configuracion", icon: "⚙️" },
     { name: "Mis Reservas", path: "/dashboard/mis-reservas", icon: icons.misReservas },
+    { name: "Notificaciones", path: "/dashboard/notificaciones", icon: "🔔" },
   ];
 
   const cards = user.role === "admin" ? adminCards : userCards;
@@ -55,7 +60,10 @@ export default function Dashboard() {
 
       {/* Contenido principal */}
       <main style={{ flex: 1, padding: 32, background: "#f5f5f5" }}>
-        <h2 style={{ color: "#003366", marginBottom: 24 }}>Bienvenido, {user?.nombre || user?.correo} 👋</h2>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+          <h2 style={{ color: "#003366", margin: 0 }}>Bienvenido, {user?.nombre || user?.correo} 👋</h2>
+          <NotificationBadge />
+        </div>
 
         {/* Grid de cards */}
         <div style={{
